@@ -1,0 +1,51 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Deep Art Effects Example</title>
+  <meta name="description" content="Deep Art Effects Example">
+  <meta name="author" content="Deep Art Effects">
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+	<div class="container">
+		<h1>Deep Art Effects - Turn image into art</h1>
+		<div id="result">
+			<h2>Your artworks</h2>
+		<div id="artwork"></div>
+		</div>
+		<h2>1. Choose picture</h2>
+		<div id="upload">
+			<input type="file" onchange="onFileSelected(event)">
+		</div>
+		<div id="progress-wrapper">
+			<img id="progressbar" src="./img/loading.gif" alt="loading"></img>
+		</div>
+		<div id="styles">
+			<h2>2. Choose art style<h2>
+			<div id="style-list"></div>
+		</div>
+	</div>
+
+  	<!-- Deep Art Effects lib -->
+	<script type="text/javascript" src="js/lib/axios/dist/axios.standalone.js"></script>
+	<script type="text/javascript" src="js/lib/CryptoJS/rollups/hmac-sha256.js"></script>
+	<script type="text/javascript" src="js/lib/CryptoJS/rollups/sha256.js"></script>
+	<script type="text/javascript" src="js/lib/CryptoJS/components/hmac.js"></script>
+	<script type="text/javascript" src="js/lib/CryptoJS/components/enc-base64.js"></script>
+	<script type="text/javascript" src="js/lib/url-template/url-template.js"></script>
+	<script type="text/javascript" src="js/lib/apiGatewayCore/sigV4Client.js"></script>
+	<script type="text/javascript" src="js/lib/apiGatewayCore/apiGatewayClient.js"></script>
+	<script type="text/javascript" src="js/lib/apiGatewayCore/simpleHttpClient.js"></script>
+	<script type="text/javascript" src="js/lib/apiGatewayCore/utils.js"></script>
+	<script type="text/javascript" src="js/apigClient.js"></script>
+
+  	<!-- JQuery lib -->
+	<script src="js/jquery.js"></script>
+
+	<!-- Site script-->
+	<script src="js/scripts.js"></script>
+</body>
+</html>

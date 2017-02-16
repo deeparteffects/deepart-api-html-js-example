@@ -1,0 +1,51 @@
+body {
+	background: #673ab7;
+	color: white;
+	font-family: Sans-serif;
+}
+
+#progress-wrapper {
+   	width: 350px;
+   	margin: auto;
+}
+
+#progressbar {
+	margin: 25px;
+}
+
+.result-image {
+	margin: 5px;
+}
+
+.container {
+    margin: auto;
+    width: 768px;
+    padding: 10px;
+    text-align: center;
+}
+
+.result-image {
+	width: 180;
+}
+
+.style {
+	width: 125px;
+	height: 125px;
+	background-size: cover;
+	background-position: center center;
+	background-repeat: no-repeat;
+	margin: 8px;
+}
+
+#selectable { 
+	list-style-type: none;
+	list-style: none;
+}
+
+#selectable li { 
+	display: inline;
+}
+
+#selectable div { 
+	float: left;
+}
