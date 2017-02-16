@@ -19,7 +19,7 @@ $(document).ready(function(){
         var ol = $('<ol id="selectable">');
         ol.appendTo('#style-list')
 		styles = result.data;
-        for (var i = 0, len = styles.length; i < len; i++) {	
+        for (var i = 0, length = styles.length; i < length; i++) {	
   			var li = $("<li>");
   			li.attr('onClick',"uploadImage("+styles[i].id+")")
   			var div = $('<div class="style">');
@@ -31,7 +31,7 @@ $(document).ready(function(){
         //This is where you would put an error callback
         console.log("Error loading styles");
     });
-}) 
+})
 function uploadImage(styleId) {
 	if(imageBinary==null) {
 		alert('Please choose a picture first')
