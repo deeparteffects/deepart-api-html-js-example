@@ -1,6 +1,9 @@
 # Deep Art Effects API Example For JavaScript
-Here is an example how you can use the Deep Art Effects API for JavaScript to
+Here is an example on how you can use the Deep Art Effects API for JavaScript to
 display available styles, upload an image and get the result.
+
+If you want to try out the example, change the values for the apiKey, accessKey
+and secretKey in `js\scripts.js` to your key values.
 
 ## 1. Add dependencies to your website
 ```javascript
@@ -30,7 +33,8 @@ var deepArtEffectsClient = apigClientFactory.newClient({
 ```
 
 ## 3. Get a list of available styles
-Next you get a list of styles using the method
+Next you want get a list of available styles using the stylesGet method. You
+get the id and a URL to an image representing the style.
 
 ```javascript
 deepArtEffectsClient.stylesGet()
