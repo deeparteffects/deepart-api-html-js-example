@@ -1,12 +1,17 @@
 body {
-	background: #673ab7;
-	color: white;
+	background: #fff;
+#	color: #673ab7;
+	color: #111;
 	font-family: Sans-serif;
 }
 
 #progress-wrapper {
    	width: 350px;
    	margin: auto;
+}
+
+#qualitySelect {
+	margin: 15px;
 }
 
 #progressbar {
@@ -25,7 +30,8 @@ body {
 }
 
 .result-image {
-	width: 180;
+	width: 125px;
+	border:1px solid #333333;
 }
 
 .style {
@@ -35,6 +41,7 @@ body {
 	background-position: center center;
 	background-repeat: no-repeat;
 	margin: 8px;
+	border:1px solid #333333;
 }
 
 #selectable { 

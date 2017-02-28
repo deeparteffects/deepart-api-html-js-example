@@ -2,11 +2,12 @@ var imageBinary;
 var styles;
 var resultCheck;
 var submissionId;
+var maxImageSize;
 
 var deepArtEffectsClient = apigClientFactory.newClient({
 	apiKey: '--INSERT YOUR API KEY--',
 	accessKey: '--INSERT YOUR ACCESS KEY--',
-    secretKey: '--INSERT YOUR SECRET KEY--',
+    secretKey: '--INSERT YOUR SECRET KEY--'
 });
 
 $(document).ready(function(){
@@ -40,10 +41,15 @@ function uploadImage(styleId) {
 
 	$("#styles").hide();
 	$("#progress-wrapper").show();
-	var params = {
-    	styleId: styleId,
+	maxImageSize = $("#qualitySelect").val();
+
+	var body = { 
+		'styleId': styleId,
+		'imageBase64Encoded': imageBinary,
+		'imageSize': maxImageSize
 	};
-	deepArtEffectsClient.uploadPost(params, imageBinary)
+
+	deepArtEffectsClient.uploadPost(null, body)
 	.then(function(result) {
 		console.log("Successfully uploaded image");
 		submissionId = result.data.submissionId
@@ -61,9 +67,12 @@ function imageReadyCheck() {
 	.then(function(result) {
 		console.log("Successfully status check");
 		if(result.data.status=="finished") {
+			var a = $('<a data-fancybox="gallery">');
+			a.attr('href', result.data.url);
 			var img = $('<img class="result-image">');
 			img.attr('src', result.data.url);
-			img.appendTo('#artwork');
+			a.append(img);
+			a.appendTo('#artwork');
 			clearInterval(resultCheck);
 			$("#result").show();
 			$("#styles").show();
@@ -77,13 +86,17 @@ function onFileSelected(event) {
     var files = event.target.files;
     var file = files[0];
 
+	maxImageSize = $("#qualitySelect").val();
+
     if (files && file) {
-        var reader = new FileReader();
-
-        reader.onload = function(readerEvt) {
-            imageBinary = btoa(readerEvt.target.result);
-        };
-
-        reader.readAsBinaryString(file);
-    }
+	    ImageTools.resize(file, {width: maxImageSize, height: maxImageSize}, 
+	    	function(blob, didItResize) {
+				var reader = new FileReader();
+				reader.onload = function(readerEvt) {
+	            	imageBinary = btoa(readerEvt.target.result);
+	        	};
+        		reader.readAsBinaryString(blob);
+	    	}
+	    );
+	}
 }

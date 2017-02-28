@@ -70,9 +70,15 @@ apiGateway.core.sigV4ClientFactory.newClient = function (config) {
 
         var canonicalQueryString = '';
         for (var i = 0; i < sortedQueryParams.length; i++) {
-            canonicalQueryString += sortedQueryParams[i] + '=' + encodeURIComponent(queryParams[sortedQueryParams[i]]) + '&';
+            canonicalQueryString += sortedQueryParams[i] + '=' + fixedEncodeURIComponent(queryParams[sortedQueryParams[i]]) + '&';
         }
         return canonicalQueryString.substr(0, canonicalQueryString.length - 1);
+    }
+
+    function fixedEncodeURIComponent (str) {
+      return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
+        return '%' + c.charCodeAt(0).toString(16);
+      });
     }
 
     function buildCanonicalHeaders(headers) {

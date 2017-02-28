@@ -4,19 +4,25 @@
 
   <title>Deep Art Effects Example</title>
   <meta name="description" content="Deep Art Effects Example">
-  <meta name="author" content="Deep Art Effects">
+  <meta name="author" content="Deep Art Effects GmbH">
 
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/fancybox.css" >
 </head>
 
 <body>
 	<div class="container">
-		<h1>Deep Art Effects - Turn image into art</h1>
+		<h1>Deep Art Effects - Turn Image Into Art</h1>
 		<div id="result">
 			<h2>Your artworks</h2>
 		<div id="artwork"></div>
 		</div>
-		<h2>1. Choose picture</h2>
+		<h2>1. Choose picture and quality</h2>
+		<select id="qualitySelect">
+		  <option value="512">Low Quality</option>
+		  <option value="1080">Medium Quality</option>
+		  <option value="1980">High Quality</option>
+		</select>
 		<div id="upload">
 			<input type="file" onchange="onFileSelected(event)">
 		</div>
@@ -45,7 +51,14 @@
   	<!-- JQuery lib -->
 	<script src="js/jquery.js"></script>
 
+	<!-- Fancybox for artwork preview -->
+	<script src="js/fancybox.js"></script>
+
+	<!-- Image tools -->
+	<script src="js/imageTools.js"></script>
+
 	<!-- Site script-->
 	<script src="js/scripts.js"></script>
+
 </body>
 </html>
