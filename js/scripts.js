@@ -22,7 +22,7 @@ $(document).ready(function(){
 		styles = result.data;
         for (var i = 0, length = styles.length; i < length; i++) {	
   			var li = $("<li>");
-  			li.attr('onClick',"uploadImage("+styles[i].id+")")
+  			li.attr('onClick',"uploadImage('"+styles[i].id+"')")
   			var div = $('<div class="style">');
 			div.attr('style', "background-image: url("+styles[i].url+")");
 			li.append(div);
