@@ -5,6 +5,8 @@ display available styles, upload an image and get the result.
 If you want to try out the example, change the values for the apiKey, accessKey
 and secretKey in `js\scripts.js` to your key values.
 
+<img src="./Screenshot.png" width = "880" height = "630" alt="0" align="center" />
+
 ## 1. Add dependencies to your website
 ```javascript
 <script type="text/javascript" src="js/lib/axios/dist/axios.standalone.js"></script>
