@@ -21,8 +21,12 @@
 		<select id="qualitySelect">
 		  <option value="512">Low Quality</option>
 		  <option value="1080">Medium Quality</option>
-		  <option value="1980">High Quality</option>
+		  <option value="1980" selected="selected">High Quality</option>
 		</select>
+		<label>
+          <input id="optimzeForPrint" type="checkbox" value="false">
+          Optimize for print
+        </label>
 		<div id="upload">
 			<input type="file" onchange="onFileSelected(event)">
 		</div>
