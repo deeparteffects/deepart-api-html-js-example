@@ -20,12 +20,16 @@
 		<h2>1. Choose picture and quality</h2>
 		<select id="qualitySelect">
 		  <option value="512">Low Quality</option>
-		  <option value="1080">Medium Quality</option>
-		  <option value="1980" selected="selected">High Quality</option>
+		  <option value="1080" selected="selected">Medium Quality</option>
+		  <option value="1980">High Quality</option>
 		</select>
 		<label>
           <input id="optimzeForPrint" type="checkbox" value="false">
           Optimize for print
+        </label>
+        <label>
+          <input id="useOriginalColors" type="checkbox" value="false">
+          Use original colors
         </label>
 		<div id="upload">
 			<input type="file" onchange="onFileSelected(event)">

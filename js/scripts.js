@@ -43,12 +43,14 @@ function uploadImage(styleId) {
 	$("#progress-wrapper").show();
 	maxImageSize = $("#qualitySelect").val();
 
-	optimizeForPrint = $('#optimzeForPrint').prop('checked')
+	optimizeForPrint = $('#optimzeForPrint').prop('checked');
+	useOriginalColors = $('#useOriginalColors').prop('checked');
 
 	var body = { 
 		'styleId': styleId,
 		'imageBase64Encoded': imageBinary,
 		'optimizeForPrint': optimizeForPrint,
+		'useOriginalColors': useOriginalColors,
 		'imageSize': maxImageSize
 	};
 
