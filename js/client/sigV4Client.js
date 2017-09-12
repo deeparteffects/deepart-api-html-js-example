@@ -1,1 +1,219 @@
-var apiGateway=apiGateway||{};apiGateway.core=apiGateway.core||{},apiGateway.core.sigV4ClientFactory={},apiGateway.core.sigV4ClientFactory.newClient=function(e){function t(e){return CryptoJS.SHA256(e)}function n(e){return e.toString(CryptoJS.enc.Hex)}function r(e,t){return CryptoJS.HmacSHA256(t,e,{asBytes:!0})}function a(e,r,a,o,c){return e+"\n"+i(r)+"\n"+s(a)+"\n"+u(o)+"\n"+y(o)+"\n"+n(t(c))}function o(e){return n(t(e))}function i(e){return encodeURI(e)}function s(e){if(Object.keys(e).length<1)return"";var t=[];for(var n in e)e.hasOwnProperty(n)&&t.push(n);t.sort();for(var r="",a=0;a<t.length;a++)r+=t[a]+"="+c(e[t[a]])+"&";return r.substr(0,r.length-1)}function c(e){return encodeURIComponent(e).replace(/[!'()*]/g,function(e){return"%"+e.charCodeAt(0).toString(16)})}function u(e){var t="",n=[];for(var r in e)e.hasOwnProperty(r)&&n.push(r);n.sort();for(var a=0;a<n.length;a++)t+=n[a].toLowerCase()+":"+e[n[a]]+"\n";return t}function y(e){var t=[];for(var n in e)e.hasOwnProperty(n)&&t.push(n.toLowerCase());return t.sort(),t.join(";")}function p(e,t,n){return w+"\n"+e+"\n"+t+"\n"+n}function d(e,t,n){return e.substr(0,8)+"/"+t+"/"+n+"/"+h}function f(e,t,n,a){return r(r(r(r(g+e,t.substr(0,8)),n),a),h)}function v(e,t){return n(r(e,t))}function l(e,t,n,r){return w+" Credential="+e+"/"+t+", SignedHeaders="+y(n)+", Signature="+r}var w="AWS4-HMAC-SHA256",h="aws4_request",g="AWS4",C="x-amz-date",G="x-amz-security-token",m="host",S="Authorization",T={};return void 0===e.accessKey||void 0===e.secretKey?T:(T.accessKey=apiGateway.core.utils.assertDefined(e.accessKey,"accessKey"),T.secretKey=apiGateway.core.utils.assertDefined(e.secretKey,"secretKey"),T.sessionToken=e.sessionToken,T.serviceName=apiGateway.core.utils.assertDefined(e.serviceName,"serviceName"),T.region=apiGateway.core.utils.assertDefined(e.region,"region"),T.endpoint=apiGateway.core.utils.assertDefined(e.endpoint,"endpoint"),T.makeRequest=function(t){var n=apiGateway.core.utils.assertDefined(t.verb,"verb"),r=apiGateway.core.utils.assertDefined(t.path,"path"),i=apiGateway.core.utils.copy(t.queryParams);void 0===i&&(i={});var c=apiGateway.core.utils.copy(t.headers);void 0===c&&(c={}),void 0===c["Content-Type"]&&(c["Content-Type"]=e.defaultContentType),void 0===c.Accept&&(c.Accept=e.defaultAcceptType);var u=apiGateway.core.utils.copy(t.body);u=void 0===u||"GET"===n?"":JSON.stringify(u),(""===u||void 0===u||null===u)&&delete c["Content-Type"];var y=(new Date).toISOString().replace(/\.\d{3}Z$/,"Z").replace(/[:\-]|\.\d{3}/g,"");c[C]=y;var w=document.createElement("a");w.href=T.endpoint,c[m]=w.hostname;var h=a(n,r,i,c,u),g=o(h),A=d(y,T.region,T.serviceName),K=p(y,A,g),k=f(T.secretKey,y,T.region,T.serviceName),D=v(k,K);c[S]=l(T.accessKey,A,c,D),void 0!==T.sessionToken&&""!==T.sessionToken&&(c[G]=T.sessionToken),delete c[m];var b=e.endpoint+r,H=s(i);""!=H&&(b+="?"+H),void 0===c["Content-Type"]&&(c["Content-Type"]=e.defaultContentType);var N={method:n,url:b,headers:c,data:u};return axios(N)},T)};
+/*
+ * Copyright 2010-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+ 
+var apiGateway = apiGateway || {};
+apiGateway.core = apiGateway.core || {};
+
+apiGateway.core.sigV4ClientFactory = {};
+apiGateway.core.sigV4ClientFactory.newClient = function (config) {
+    var AWS_SHA_256 = 'AWS4-HMAC-SHA256';
+    var AWS4_REQUEST = 'aws4_request';
+    var AWS4 = 'AWS4';
+    var X_AMZ_DATE = 'x-amz-date';
+    var X_AMZ_SECURITY_TOKEN = 'x-amz-security-token';
+    var HOST = 'host';
+    var AUTHORIZATION = 'Authorization';
+
+    function hash(value) {
+        return CryptoJS.SHA256(value);
+    }
+
+    function hexEncode(value) {
+        return value.toString(CryptoJS.enc.Hex);
+    }
+
+    function hmac(secret, value) {
+        return CryptoJS.HmacSHA256(value, secret, {asBytes: true});
+    }
+
+    function buildCanonicalRequest(method, path, queryParams, headers, payload) {
+        return method + '\n' +
+            buildCanonicalUri(path) + '\n' +
+            buildCanonicalQueryString(queryParams) + '\n' +
+            buildCanonicalHeaders(headers) + '\n' +
+            buildCanonicalSignedHeaders(headers) + '\n' +
+            hexEncode(hash(payload));
+    }
+
+    function hashCanonicalRequest(request) {
+        return hexEncode(hash(request));
+    }
+
+    function buildCanonicalUri(uri) {
+        return encodeURI(uri);
+    }
+
+    function buildCanonicalQueryString(queryParams) {
+        if (Object.keys(queryParams).length < 1) {
+            return '';
+        }
+
+        var sortedQueryParams = [];
+        for (var property in queryParams) {
+            if (queryParams.hasOwnProperty(property)) {
+                sortedQueryParams.push(property);
+            }
+        }
+        sortedQueryParams.sort();
+
+        var canonicalQueryString = '';
+        for (var i = 0; i < sortedQueryParams.length; i++) {
+            canonicalQueryString += sortedQueryParams[i] + '=' + fixedEncodeURIComponent(queryParams[sortedQueryParams[i]]) + '&';
+        }
+        return canonicalQueryString.substr(0, canonicalQueryString.length - 1);
+    }
+
+    function fixedEncodeURIComponent (str) {
+      return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
+        return '%' + c.charCodeAt(0).toString(16);
+      });
+    }
+
+    function buildCanonicalHeaders(headers) {
+        var canonicalHeaders = '';
+        var sortedKeys = [];
+        for (var property in headers) {
+            if (headers.hasOwnProperty(property)) {
+                sortedKeys.push(property);
+            }
+        }
+        sortedKeys.sort();
+
+        for (var i = 0; i < sortedKeys.length; i++) {
+            canonicalHeaders += sortedKeys[i].toLowerCase() + ':' + headers[sortedKeys[i]] + '\n';
+        }
+        return canonicalHeaders;
+    }
+
+    function buildCanonicalSignedHeaders(headers) {
+        var sortedKeys = [];
+        for (var property in headers) {
+            if (headers.hasOwnProperty(property)) {
+                sortedKeys.push(property.toLowerCase());
+            }
+        }
+        sortedKeys.sort();
+
+        return sortedKeys.join(';');
+    }
+
+    function buildStringToSign(datetime, credentialScope, hashedCanonicalRequest) {
+        return AWS_SHA_256 + '\n' +
+            datetime + '\n' +
+            credentialScope + '\n' +
+            hashedCanonicalRequest;
+    }
+
+    function buildCredentialScope(datetime, region, service) {
+        return datetime.substr(0, 8) + '/' + region + '/' + service + '/' + AWS4_REQUEST
+    }
+
+    function calculateSigningKey(secretKey, datetime, region, service) {
+        return hmac(hmac(hmac(hmac(AWS4 + secretKey, datetime.substr(0, 8)), region), service), AWS4_REQUEST);
+    }
+
+    function calculateSignature(key, stringToSign) {
+        return hexEncode(hmac(key, stringToSign));
+    }
+
+    function buildAuthorizationHeader(accessKey, credentialScope, headers, signature) {
+        return AWS_SHA_256 + ' Credential=' + accessKey + '/' + credentialScope + ', SignedHeaders=' + buildCanonicalSignedHeaders(headers) + ', Signature=' + signature;
+    }
+
+    var awsSigV4Client = { };
+    if(config.accessKey === undefined || config.secretKey === undefined) {
+        return awsSigV4Client;
+    }
+    awsSigV4Client.accessKey = apiGateway.core.utils.assertDefined(config.accessKey, 'accessKey');
+    awsSigV4Client.secretKey = apiGateway.core.utils.assertDefined(config.secretKey, 'secretKey');
+    awsSigV4Client.sessionToken = config.sessionToken;
+    awsSigV4Client.serviceName = apiGateway.core.utils.assertDefined(config.serviceName, 'serviceName');
+    awsSigV4Client.region = apiGateway.core.utils.assertDefined(config.region, 'region');
+    awsSigV4Client.endpoint = apiGateway.core.utils.assertDefined(config.endpoint, 'endpoint');
+
+    awsSigV4Client.makeRequest = function (request) {
+        var verb = apiGateway.core.utils.assertDefined(request.verb, 'verb');
+        var path = apiGateway.core.utils.assertDefined(request.path, 'path');
+        var queryParams = apiGateway.core.utils.copy(request.queryParams);
+        if (queryParams === undefined) {
+            queryParams = {};
+        }
+        var headers = apiGateway.core.utils.copy(request.headers);
+        if (headers === undefined) {
+            headers = {};
+        }
+
+        //If the user has not specified an override for Content type the use default
+        if(headers['Content-Type'] === undefined) {
+            headers['Content-Type'] = config.defaultContentType;
+        }
+
+        //If the user has not specified an override for Accept type the use default
+        if(headers['Accept'] === undefined) {
+            headers['Accept'] = config.defaultAcceptType;
+        }
+
+        var body = apiGateway.core.utils.copy(request.body);
+        if (body === undefined || verb === 'GET') { // override request body and set to empty when signing GET requests
+            body = '';
+        }  else {
+            body = JSON.stringify(body);
+        }
+
+        //If there is no body remove the content-type header so it is not included in SigV4 calculation
+        if(body === '' || body === undefined || body === null) {
+            delete headers['Content-Type'];
+        }
+
+        var datetime = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z').replace(/[:\-]|\.\d{3}/g, '');
+        headers[X_AMZ_DATE] = datetime;
+        var parser = document.createElement('a');
+        parser.href = awsSigV4Client.endpoint;
+        headers[HOST] = parser.hostname;
+
+        var canonicalRequest = buildCanonicalRequest(verb, path, queryParams, headers, body);
+        var hashedCanonicalRequest = hashCanonicalRequest(canonicalRequest);
+        var credentialScope = buildCredentialScope(datetime, awsSigV4Client.region, awsSigV4Client.serviceName);
+        var stringToSign = buildStringToSign(datetime, credentialScope, hashedCanonicalRequest);
+        var signingKey = calculateSigningKey(awsSigV4Client.secretKey, datetime, awsSigV4Client.region, awsSigV4Client.serviceName);
+        var signature = calculateSignature(signingKey, stringToSign);
+        headers[AUTHORIZATION] = buildAuthorizationHeader(awsSigV4Client.accessKey, credentialScope, headers, signature);
+        if(awsSigV4Client.sessionToken !== undefined && awsSigV4Client.sessionToken !== '') {
+            headers[X_AMZ_SECURITY_TOKEN] = awsSigV4Client.sessionToken;
+        }
+        delete headers[HOST];
+
+        var url = config.endpoint + path;
+        var queryString = buildCanonicalQueryString(queryParams);
+        if (queryString != '') {
+            url += '?' + queryString;
+        }
+
+        //Need to re-attach Content-Type if it is not specified at this point
+        if(headers['Content-Type'] === undefined) {
+            headers['Content-Type'] = config.defaultContentType;
+        }
+
+        var signedRequest = {
+            method: verb,
+            url: url,
+            headers: headers,
+            data: body
+        };
+        return axios(signedRequest);
+    };
+
+    return awsSigV4Client;
+};

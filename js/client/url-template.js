@@ -1,1 +1,438 @@
-var uritemplate=function(){function n(n){return"function"==typeof n}function e(n){for(var e in n)return!1;return!0}function r(n,e){for(var r in e)n[r]=e[r];return n}function t(n){this.raw=n,this.cache={}}function i(n){this.set=n}function o(n){this.txt=n}function u(n){return encodeURIComponent(n).replace(w,function(n){return escape(n)})}function a(n){return encodeURI(n)}function s(n,e,r){return e+(e.length>0?"=":"")+r}function c(n,e,r,t){return t=t||!1,t&&(n=""),e&&0!==e.length||(e=n),e+(e.length>0?"=":"")+r}function p(n,e,r,t){return t=t||!1,t&&(n=""),e&&0!==e.length||(e=n),e+(e.length>0&&r?"=":"")+r}function f(n,e){r(this,n),this.vars=e}function l(n){this.str="",n===R?this.appender=l.UnboundAppend:(this.len=0,this.limit=n,this.appender=l.BoundAppend)}function d(n,e,r){var t=new l(r),i="",o=0,u=n.length;for(o=0;u>o;o++)null!==n[o]&&void 0!==n[o]&&(t.append(i).append(n[o],e),i=",");return t.str}function h(n,e,r){var t,i=new l(r),o="";for(t in n)n.hasOwnProperty(t)&&null!==n[t]&&void 0!==n[t]&&(i.append(o+t+",").append(n[t],e),o=",");return i.str}function v(n,e,r,t,i){var o;if(r.isArr)o=d(e,t,n.maxLength);else if(r.isObj)o=h(e,t,n.maxLength);else{var u=new l(n.maxLength);o=u.append(e,t).str}i("",o)}function b(n,e,r,t,i){if(r.isArr){var o=0,u=e.length;for(o=0;u>o;o++)i("",t(e[o]))}else if(r.isObj){var a;for(a in e)e.hasOwnProperty(a)&&i(a,t(e[a]))}else i("",t(e))}function x(n){var r=!1,t=!1,i=!0;return null!==n&&void 0!==n&&(r=n.constructor===Array,t=n.constructor===Object,i=r&&0===n.length||t&&e(n)),{isArr:r,isObj:t,isUndef:i}}function g(n,e,r){this.name=unescape(n),this.valueHandler=e,this.maxLength=r}t.prototype.get=function(e){var r=this.lookupRaw(e),t=r;if(n(r)){var i=this.cache[e];null!==i&&void 0!==i?t=i.val:(t=r(this.raw),this.cache[e]={key:e,val:t})}return t},t.prototype.lookupRaw=function(n){return t.lookup(this,this.raw,n)},t.lookup=function(n,e,r){var i=e[r];if(void 0!==i)return i;var o=r.split("."),u=0,a=o.length-1;for(u=0;a>u;u++){var s=o.slice(0,a-u).join("."),c=o.slice(-u-1).join("."),p=e[s];if(void 0!==p)return t.lookup(n,p,c)}return void 0},i.prototype.expand=function(n){var e=new t(n),r="",i=0,o=this.set.length;for(i=0;o>i;i++)r+=this.set[i].expand(e);return r},o.prototype.expand=function(){return this.txt};var w=new RegExp("[:/?#\\[\\]@!$&()*+,;=']","g"),j={prefix:"",joiner:",",encode:u,builder:s},k={prefix:"",joiner:",",encode:a,builder:s},m={prefix:"#",joiner:",",encode:a,builder:s},y={prefix:";",joiner:";",encode:u,builder:p},A={prefix:"?",joiner:"&",encode:u,builder:c},U={prefix:"&",joiner:"&",encode:u,builder:c},O={prefix:"/",joiner:"/",encode:u,builder:s},I={prefix:".",joiner:".",encode:u,builder:s};f.build=function(n,e){var r;switch(n){case"":r=j;break;case"+":r=k;break;case"#":r=m;break;case";":r=y;break;case"?":r=A;break;case"&":r=U;break;case"/":r=O;break;case".":r=I;break;default:throw"Unexpected operator: '"+n+"'"}return new f(r,e)},f.prototype.expand=function(n){var e=this.prefix,r=this.joiner,t=this.builder,i="",o=0,u=this.vars.length;for(o=0;u>o;o++){var a=this.vars[o];a.addValues(n,this.encode,function(n,o,u){var s=t(a.name,n,o,u);null!==s&&void 0!==s&&(i+=e+s,e=r)})}return i};var R={};l.prototype.append=function(n,e){return this.appender(this,n,e)},l.UnboundAppend=function(n,e,r){return e=r?r(e):e,n.str+=e,n},l.BoundAppend=function(n,e,r){return e=e.substring(0,n.limit-n.len),n.len+=e.length,e=r?r(e):e,n.str+=e,n},g.build=function(n,e,r,t){var i;return i=e?b:v,r||(t=R),new g(n,i,t)},g.prototype.addValues=function(n,e,r){var t=n.get(this.name),i=x(t);i.isUndef||this.valueHandler(this,t,i,e,r)};var L=/([^*:]*)((\*)|(:)([0-9]+))?/,$=function(n){var e=n[1],r=n[3],t=n[4],i=parseInt(n[5],10);return g.build(e,r,t,i)},B=",",H=/(\{([+#.;?&\/])?(([^.*:,{}|@!=$()][^*:,{}$()]*)(\*|:([0-9]+))?(,([^.*:,{}][^*:,{}]*)(\*|:([0-9]+))?)*)\})/g,P=function(n){var e=(n[0],n[2]||""),r=n[3].split(B),t=0,i=r.length;for(t=0;i>t;t++){var o;if(null===(o=r[t].match(L)))throw"unexpected parse error in varspec: "+r[t];r[t]=$(o)}return f.build(e,r)},V=function(n,e,r,t){if(t>r){var i=e.substr(r,t-r);n.push(new o(i))}},C=function(n){var e,r=0,t=[],o=H;for(o.lastIndex=0;null!==(e=o.exec(n));){var u=e.index;V(t,n,r,u),t.push(P(e)),r=o.lastIndex}return V(t,n,r,n.length),new i(t)};return C}();
+/*
+ UriTemplates Template Processor - Version: @VERSION - Dated: @DATE
+ (c) marc.portier@gmail.com - 2011-2012
+ Licensed under APLv2 (http://opensource.org/licenses/Apache-2.0)
+ */
+
+;
+var uritemplate = (function() {
+
+// Below are the functions we originally used from jQuery.
+// The implementations below are often more naive then what is inside jquery, but they suffice for our needs.
+
+    function isFunction(fn) {
+        return typeof fn == 'function';
+    }
+
+    function isEmptyObject (obj) {
+        for(var name in obj){
+            return false;
+        }
+        return true;
+    }
+
+    function extend(base, newprops) {
+        for (var name in newprops) {
+            base[name] = newprops[name];
+        }
+        return base;
+    }
+
+    /**
+     * Create a runtime cache around retrieved values from the context.
+     * This allows for dynamic (function) results to be kept the same for multiple
+     * occuring expansions within one template.
+     * Note: Uses key-value tupples to be able to cache null values as well.
+     */
+        //TODO move this into prep-processing
+    function CachingContext(context) {
+        this.raw = context;
+        this.cache = {};
+    }
+    CachingContext.prototype.get = function(key) {
+        var val = this.lookupRaw(key);
+        var result = val;
+
+        if (isFunction(val)) { // check function-result-cache
+            var tupple = this.cache[key];
+            if (tupple !== null && tupple !== undefined) {
+                result = tupple.val;
+            } else {
+                result = val(this.raw);
+                this.cache[key] = {key: key, val: result};
+                // NOTE: by storing tupples we make sure a null return is validly consistent too in expansions
+            }
+        }
+        return result;
+    };
+
+    CachingContext.prototype.lookupRaw = function(key) {
+        return CachingContext.lookup(this, this.raw, key);
+    };
+
+    CachingContext.lookup = function(me, context, key) {
+        var result = context[key];
+        if (result !== undefined) {
+            return result;
+        } else {
+            var keyparts = key.split('.');
+            var i = 0, keysplits = keyparts.length - 1;
+            for (i = 0; i<keysplits; i++) {
+                var leadKey = keyparts.slice(0, keysplits - i).join('.');
+                var trailKey = keyparts.slice(-i-1).join('.');
+                var leadContext = context[leadKey];
+                if (leadContext !== undefined) {
+                    return CachingContext.lookup(me, leadContext, trailKey);
+                }
+            }
+            return undefined;
+        }
+    };
+
+
+    function UriTemplate(set) {
+        this.set = set;
+    }
+
+    UriTemplate.prototype.expand = function(context) {
+        var cache = new CachingContext(context);
+        var res = "";
+        var i = 0, cnt = this.set.length;
+        for (i = 0; i<cnt; i++ ) {
+            res += this.set[i].expand(cache);
+        }
+        return res;
+    };
+
+//TODO: change since draft-0.6 about characters in literals
+    /* extract:
+     The characters outside of expressions in a URI Template string are intended to be copied literally to the URI-reference if the character is allowed in a URI (reserved / unreserved / pct-encoded) or, if not allowed, copied to the URI-reference in its UTF-8 pct-encoded form.
+     */
+    function Literal(txt ) {
+        this.txt = txt;
+    }
+
+    Literal.prototype.expand = function() {
+        return this.txt;
+    };
+
+
+
+    var RESERVEDCHARS_RE = new RegExp("[:/?#\\[\\]@!$&()*+,;=']","g");
+    function encodeNormal(val) {
+        return encodeURIComponent(val).replace(RESERVEDCHARS_RE, function(s) {return escape(s);} );
+    }
+
+//var SELECTEDCHARS_RE = new RegExp("[]","g");
+    function encodeReserved(val) {
+        //return encodeURI(val).replace(SELECTEDCHARS_RE, function(s) {return escape(s)} );
+        return encodeURI(val); // no need for additional replace if selected-chars is empty
+    }
+
+
+    function addUnNamed(name, key, val) {
+        return key + (key.length > 0 ? "=" : "") + val;
+    }
+
+    function addNamed(name, key, val, noName) {
+        noName = noName || false;
+        if (noName) { name = ""; }
+
+        if (!key || key.length === 0)  {
+            key = name;
+        }
+        return key + (key.length > 0 ? "=" : "") + val;
+    }
+
+    function addLabeled(name, key, val, noName) {
+        noName = noName || false;
+        if (noName) { name = ""; }
+
+        if (!key || key.length === 0)  {
+            key = name;
+        }
+        return key + (key.length > 0 && val ? "=" : "") + val;
+    }
+
+
+    var simpleConf = {
+        prefix : "",     joiner : ",",     encode : encodeNormal,    builder : addUnNamed
+    };
+    var reservedConf = {
+        prefix : "",     joiner : ",",     encode : encodeReserved,  builder : addUnNamed
+    };
+    var fragmentConf = {
+        prefix : "#",    joiner : ",",     encode : encodeReserved,  builder : addUnNamed
+    };
+    var pathParamConf = {
+        prefix : ";",    joiner : ";",     encode : encodeNormal,    builder : addLabeled
+    };
+    var formParamConf = {
+        prefix : "?",    joiner : "&",     encode : encodeNormal,    builder : addNamed
+    };
+    var formContinueConf = {
+        prefix : "&",    joiner : "&",     encode : encodeNormal,    builder : addNamed
+    };
+    var pathHierarchyConf = {
+        prefix : "/",    joiner : "/",     encode : encodeNormal,    builder : addUnNamed
+    };
+    var labelConf = {
+        prefix : ".",    joiner : ".",     encode : encodeNormal,    builder : addUnNamed
+    };
+
+
+    function Expression(conf, vars ) {
+        extend(this, conf);
+        this.vars = vars;
+    }
+
+    Expression.build = function(ops, vars) {
+        var conf;
+        switch(ops) {
+            case ''  : conf = simpleConf; break;
+            case '+' : conf = reservedConf; break;
+            case '#' : conf = fragmentConf; break;
+            case ';' : conf = pathParamConf; break;
+            case '?' : conf = formParamConf; break;
+            case '&' : conf = formContinueConf; break;
+            case '/' : conf = pathHierarchyConf; break;
+            case '.' : conf = labelConf; break;
+            default  : throw "Unexpected operator: '"+ops+"'";
+        }
+        return new Expression(conf, vars);
+    };
+
+    Expression.prototype.expand = function(context) {
+        var joiner = this.prefix;
+        var nextjoiner = this.joiner;
+        var buildSegment = this.builder;
+        var res = "";
+        var i = 0, cnt = this.vars.length;
+
+        for (i = 0 ; i< cnt; i++) {
+            var varspec = this.vars[i];
+            varspec.addValues(context, this.encode, function(key, val, noName) {
+                var segm = buildSegment(varspec.name, key, val, noName);
+                if (segm !== null && segm !== undefined) {
+                    res += joiner + segm;
+                    joiner = nextjoiner;
+                }
+            });
+        }
+        return res;
+    };
+
+
+
+    var UNBOUND = {};
+
+    /**
+     * Helper class to help grow a string of (possibly encoded) parts until limit is reached
+     */
+    function Buffer(limit) {
+        this.str = "";
+        if (limit === UNBOUND) {
+            this.appender = Buffer.UnboundAppend;
+        } else {
+            this.len = 0;
+            this.limit = limit;
+            this.appender = Buffer.BoundAppend;
+        }
+    }
+
+    Buffer.prototype.append = function(part, encoder) {
+        return this.appender(this, part, encoder);
+    };
+
+    Buffer.UnboundAppend = function(me, part, encoder) {
+        part = encoder ? encoder(part) : part;
+        me.str += part;
+        return me;
+    };
+
+    Buffer.BoundAppend = function(me, part, encoder) {
+        part = part.substring(0, me.limit - me.len);
+        me.len += part.length;
+
+        part = encoder ? encoder(part) : part;
+        me.str += part;
+        return me;
+    };
+
+
+    function arrayToString(arr, encoder, maxLength) {
+        var buffer = new Buffer(maxLength);
+        var joiner = "";
+
+        var i = 0, cnt = arr.length;
+        for (i=0; i<cnt; i++) {
+            if (arr[i] !== null && arr[i] !== undefined) {
+                buffer.append(joiner).append(arr[i], encoder);
+                joiner = ",";
+            }
+        }
+        return buffer.str;
+    }
+
+    function objectToString(obj, encoder, maxLength) {
+        var buffer = new Buffer(maxLength);
+        var joiner = "";
+        var k;
+
+        for (k in obj) {
+            if (obj.hasOwnProperty(k) ) {
+                if (obj[k] !== null && obj[k] !== undefined) {
+                    buffer.append(joiner + k + ',').append(obj[k], encoder);
+                    joiner = ",";
+                }
+            }
+        }
+        return buffer.str;
+    }
+
+
+    function simpleValueHandler(me, val, valprops, encoder, adder) {
+        var result;
+
+        if (valprops.isArr) {
+            result = arrayToString(val, encoder, me.maxLength);
+        } else if (valprops.isObj) {
+            result = objectToString(val, encoder, me.maxLength);
+        } else {
+            var buffer = new Buffer(me.maxLength);
+            result = buffer.append(val, encoder).str;
+        }
+
+        adder("", result);
+    }
+
+    function explodeValueHandler(me, val, valprops, encoder, adder) {
+        if (valprops.isArr) {
+            var i = 0, cnt = val.length;
+            for (i = 0; i<cnt; i++) {
+                adder("", encoder(val[i]) );
+            }
+        } else if (valprops.isObj) {
+            var k;
+            for (k in val) {
+                if (val.hasOwnProperty(k)) {
+                    adder(k, encoder(val[k]) );
+                }
+            }
+        } else { // explode-requested, but single value
+            adder("", encoder(val));
+        }
+    }
+
+    function valueProperties(val) {
+        var isArr = false;
+        var isObj = false;
+        var isUndef = true;  //note: "" is empty but not undef
+
+        if (val !== null && val !== undefined) {
+            isArr = (val.constructor === Array);
+            isObj = (val.constructor === Object);
+            isUndef = (isArr && val.length === 0) || (isObj && isEmptyObject(val));
+        }
+
+        return {isArr: isArr, isObj: isObj, isUndef: isUndef};
+    }
+
+
+    function VarSpec (name, vhfn, nums) {
+        this.name = unescape(name);
+        this.valueHandler = vhfn;
+        this.maxLength = nums;
+    }
+
+
+    VarSpec.build = function(name, expl, part, nums) {
+        var valueHandler, valueModifier;
+
+        if (!!expl) { //interprete as boolean
+            valueHandler = explodeValueHandler;
+        } else {
+            valueHandler = simpleValueHandler;
+        }
+
+        if (!part) {
+            nums = UNBOUND;
+        }
+
+        return new VarSpec(name, valueHandler, nums);
+    };
+
+
+    VarSpec.prototype.addValues = function(context, encoder, adder) {
+        var val = context.get(this.name);
+        var valprops = valueProperties(val);
+        if (valprops.isUndef) { return; } // ignore empty values
+        this.valueHandler(this, val, valprops, encoder, adder);
+    };
+
+
+
+//----------------------------------------------parsing logic
+// How each varspec should look like
+    var VARSPEC_RE=/([^*:]*)((\*)|(:)([0-9]+))?/;
+
+    var match2varspec = function(m) {
+        var name = m[1];
+        var expl = m[3];
+        var part = m[4];
+        var nums = parseInt(m[5], 10);
+
+        return VarSpec.build(name, expl, part, nums);
+    };
+
+
+// Splitting varspecs in list with:
+    var LISTSEP=",";
+
+// How each template should look like
+    var TEMPL_RE=/(\{([+#.;?&\/])?(([^.*:,{}|@!=$()][^*:,{}$()]*)(\*|:([0-9]+))?(,([^.*:,{}][^*:,{}]*)(\*|:([0-9]+))?)*)\})/g;
+// Note: reserved operators: |!@ are left out of the regexp in order to make those templates degrade into literals
+// (as expected by the spec - see tests.html "reserved operators")
+
+
+    var match2expression = function(m) {
+        var expr = m[0];
+        var ops = m[2] || '';
+        var vars = m[3].split(LISTSEP);
+        var i = 0, len = vars.length;
+        for (i = 0; i<len; i++) {
+            var match;
+            if ( (match = vars[i].match(VARSPEC_RE)) === null) {
+                throw "unexpected parse error in varspec: " + vars[i];
+            }
+            vars[i] = match2varspec(match);
+        }
+
+        return Expression.build(ops, vars);
+    };
+
+
+    var pushLiteralSubstr = function(set, src, from, to) {
+        if (from < to) {
+            var literal = src.substr(from, to - from);
+            set.push(new Literal(literal));
+        }
+    };
+
+    var parse = function(str) {
+        var lastpos = 0;
+        var comp = [];
+
+        var match;
+        var pattern = TEMPL_RE;
+        pattern.lastIndex = 0; // just to be sure
+        while ((match = pattern.exec(str)) !== null) {
+            var newpos = match.index;
+            pushLiteralSubstr(comp, str, lastpos, newpos);
+
+            comp.push(match2expression(match));
+            lastpos = pattern.lastIndex;
+        }
+        pushLiteralSubstr(comp, str, lastpos, str.length);
+
+        return new UriTemplate(comp);
+    };
+
+
+//-------------------------------------------comments and ideas
+
+//TODO: consider building cache of previously parsed uris or even parsed expressions?
+
+    return parse;
+
+}());
