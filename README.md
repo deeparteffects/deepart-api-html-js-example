@@ -87,3 +87,10 @@ deepArtEffectsClient.resultGet(params)
   console.log("Error checking status");
 });
 ```
+
+## Running with Docker
+To run this project using Docker, simply use Docker Compose:
+```bash
+docker-compose up
+```
+The application will be available at http://localhost:8080. The project files are mounted as a volume, so any changes you make will be reflected immediately without rebuilding the container.
